@@ -67,9 +67,10 @@ class Command:
         
         if self.folder in self.folders:
             index = self.folders.index(self.folder)
-            button_proc(self.h_btn, BTN_SET_ITEMINDEX, index)
         else:
-            button_proc(self.h_btn, BTN_SET_ITEMINDEX, 0)
+            index = 0
+            
+        button_proc(self.h_btn, BTN_SET_ITEMINDEX, index)
     
 
     def get_clips(self, fn):
