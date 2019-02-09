@@ -65,7 +65,7 @@ class Command:
 
         self.folders = enum_dir(dir_clips1) + enum_dir(dir_clips2)
         self.folders_ = [os.path.basename(i) for i in self.folders]
-        
+
         button_proc(self.h_btn, BTN_SET_ITEMS, '\n'.join(self.folders_))
 
         if self.folder in self.folders_:
@@ -84,7 +84,7 @@ class Command:
             d = parse_synwrite_snip(lines)
             if d:
                 r.append(d)
-        else:                
+        else:
             for s in lines:
                 r.append(parse_usual_snip(s))
         return r
@@ -97,8 +97,14 @@ class Command:
             return
         clip = self.clips[index]
 
-        msg_status('Inserting snippet: '+clip['name'])
-        ed.cmd(cmds.cCommand_TextInsert, clip['text'])
+        msg_status('Inserting: '+clip['name'])
+        text = clip['text']
+
+        if clip['kind']=='sw':
+            sel = ed.get_text_sel()
+            text = text.replace('${sel}', sel)
+
+        ed.cmd(cmds.cCommand_TextInsert, text)
 
 
     def callback_btn_change(self, id_dlg, id_ctl, data='', info=''):
@@ -108,7 +114,7 @@ class Command:
 
         index = button_proc(self.h_btn, BTN_GET_ITEMINDEX)
         if index<0: return
-        
+
         self.folder = self.folders[index]
         self.folder_ = self.folders_[index]
         ini_write(fn_config, 'op', 'folder', self.folder_)
@@ -119,7 +125,7 @@ class Command:
 
         for filename in files:
             self.clips += self.get_clips(filename)
-            
+
         for i in self.clips:
             listbox_proc(self.h_list, LISTBOX_ADD, index=-1, text=i['name'])
 
