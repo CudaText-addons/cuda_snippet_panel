@@ -1,5 +1,6 @@
 import os
 from cudatext import *
+import cudatext_cmd as cmds
 from .io import *
 
 fn_config = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_snippet_panel.ini')
@@ -49,6 +50,7 @@ class Command:
         dlg_proc(h, DLG_CTL_PROP_SET, index=n, prop={
             'name': 'list',
             'align': ALIGN_CLIENT,
+            'on_click_dbl': self.callback_list_dblclick,
             })
         self.h_list = dlg_proc(h, DLG_CTL_HANDLE, index=n)
         
@@ -59,8 +61,8 @@ class Command:
 
     def update_combo(self):
     
-        self.clips = sorted(os.listdir(dir_clips))
-        button_proc(self.h_btn, BTN_SET_ITEMS, '\n'.join(self.clips))
+        self.folders = sorted(os.listdir(dir_clips))
+        button_proc(self.h_btn, BTN_SET_ITEMS, '\n'.join(self.folders))
         button_proc(self.h_btn, BTN_SET_ITEMINDEX, 0)
     
     def update_list(self):
@@ -79,17 +81,28 @@ class Command:
         return r
             
         
+    def callback_list_dblclick(self, id_dlg, id_ctl, data='', info=''):
+    
+        index = listbox_proc(self.h_list, LISTBOX_GET_SEL)
+        clip = self.clips[index]
+        ed.cmd(cmds.cCommand_TextInsert, clip[1])
+        
+    
     def callback_btn_change(self, id_dlg, id_ctl, data='', info=''):
 
+        self.clips = []
         listbox_proc(self.h_list, LISTBOX_DELETE_ALL)
+        
         id = button_proc(self.h_btn, BTN_GET_ITEMINDEX)
         if id<0: return
-        dir = os.path.join(dir_clips, self.clips[id])
-        
+
+        dir = os.path.join(dir_clips, self.folders[id])
         l = os.listdir(dir)
         l = [os.path.join(dir, i) for i in l if i.endswith('.txt')]
         if not l: return
         
-        items = self.get_clips(l[0])
-        for i in items:
+        self.clips = self.get_clips(l[0])
+        for i in self.clips:
             listbox_proc(self.h_list, LISTBOX_ADD, index=-1, text=i[0])
+
+        listbox_proc(self.h_list, LISTBOX_SET_SEL, index=0)
