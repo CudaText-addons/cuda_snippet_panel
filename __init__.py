@@ -65,6 +65,7 @@ class Command:
         self.h_list = dlg_proc(h, DLG_CTL_HANDLE, index=n)
 
         button_proc(self.h_btn, BTN_SET_KIND, BTNKIND_TEXT_CHOICE)
+        button_proc(self.h_btn, BTN_SET_ARROW, True)
 
         listbox_proc(self.h_list, LISTBOX_THEME)
 
