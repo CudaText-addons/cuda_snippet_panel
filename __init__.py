@@ -2,6 +2,7 @@ import os
 from cudatext import *
 import cudatext_cmd as cmds
 from .utils import *
+from .snips import *
 
 fn_config = 'plugins.ini'
 fn_icon = os.path.join(os.path.dirname(__file__), 'snip.png')
@@ -80,10 +81,7 @@ class Command:
         lines = open_read(fn).splitlines()
         r = []
         for s in lines:
-            if '=' in s:
-                r.append(s.split('=', maxsplit=2))
-            else:
-                r.append((s, s))
+            r.append(parse_usual_snip(s))
         return r
 
 
@@ -94,8 +92,8 @@ class Command:
             return
         clip = self.clips[index]
 
-        msg_status('Inserting snippet: '+clip[0])
-        ed.cmd(cmds.cCommand_TextInsert, clip[1])
+        msg_status('Inserting snippet: '+clip['name'])
+        ed.cmd(cmds.cCommand_TextInsert, clip['text'])
 
 
     def callback_btn_change(self, id_dlg, id_ctl, data='', info=''):
@@ -118,7 +116,7 @@ class Command:
             self.clips += self.get_clips(filename)
             
         for i in self.clips:
-            listbox_proc(self.h_list, LISTBOX_ADD, index=-1, text=i[0])
+            listbox_proc(self.h_list, LISTBOX_ADD, index=-1, text=i['name'])
 
         listbox_proc(self.h_list, LISTBOX_SET_SEL, index=0)
 
