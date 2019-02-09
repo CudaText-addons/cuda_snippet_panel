@@ -88,6 +88,8 @@ class Command:
     def callback_list_dblclick(self, id_dlg, id_ctl, data='', info=''):
     
         index = listbox_proc(self.h_list, LISTBOX_GET_SEL)
+        if index<0 or index>=len(self.clips):
+            return
         clip = self.clips[index]
         ed.cmd(cmds.cCommand_TextInsert, clip[1])
         
