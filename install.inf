@@ -9,3 +9,8 @@ homepage=https://github.com/CudaText-addons/cuda_snippet_panel
 section=commands
 caption=Snippet Panel
 method=open_dlg
+
+[sidebar1]
+hint=Snippet Panel
+icon={dir}/snip.png
+method=open_dlg
