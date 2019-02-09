@@ -5,7 +5,8 @@ from .io import *
 
 fn_config = 'plugins.ini'
 fn_icon = os.path.join(os.path.dirname(__file__), 'snip.png')
-dir_clips = os.path.join(os.path.dirname(__file__), 'clips')
+dir_clips1 = os.path.join(os.path.dirname(__file__), 'clips')
+dir_clips2 = os.path.join(app_path(APP_DIR_DATA), 'clips')
 
 option_int = 100
 option_bool = True
@@ -13,6 +14,14 @@ option_bool = True
 def bool_to_str(v): return '1' if v else '0'
 def str_to_bool(s): return s=='1'
 
+def enum_dir(dir):
+
+    if not os.path.isdir(dir):
+        return []    
+    l = sorted(os.listdir(dir))
+    l = [os.path.join(dir, i) for i in l]
+    return l
+        
 
 class Command:
 
@@ -60,13 +69,16 @@ class Command:
         listbox_proc(self.h_list, LISTBOX_THEME)
 
 
+
     def update_combo(self):
 
-        self.folders = sorted(os.listdir(dir_clips))
-        button_proc(self.h_btn, BTN_SET_ITEMS, '\n'.join(self.folders))
+        self.folders = enum_dir(dir_clips1) + enum_dir(dir_clips2)
+        self.folders_ = [os.path.basename(i) for i in self.folders]
+        
+        button_proc(self.h_btn, BTN_SET_ITEMS, '\n'.join(self.folders_))
 
-        if self.folder in self.folders:
-            index = self.folders.index(self.folder)
+        if self.folder in self.folders_:
+            index = self.folders_.index(self.folder)
         else:
             index = 0
 
@@ -101,18 +113,20 @@ class Command:
         self.clips = []
         listbox_proc(self.h_list, LISTBOX_DELETE_ALL)
 
-        id = button_proc(self.h_btn, BTN_GET_ITEMINDEX)
-        if id<0: return
+        index = button_proc(self.h_btn, BTN_GET_ITEMINDEX)
+        if index<0: return
+        
+        self.folder = self.folders[index]
+        self.folder_ = self.folders_[index]
+        ini_write(fn_config, 'op', 'folder', self.folder_)
 
-        self.folder = self.folders[id]
-        ini_write(fn_config, 'op', 'folder', self.folder)
+        files = enum_dir(self.folder)
+        files = [i for i in files if i.endswith('.txt')]
+        if not files: return
 
-        dir = os.path.join(dir_clips, self.folder)
-        l = os.listdir(dir)
-        l = [os.path.join(dir, i) for i in l if i.endswith('.txt')]
-        if not l: return
-
-        self.clips = self.get_clips(l[0])
+        for filename in files:
+            self.clips += self.get_clips(filename)
+            
         for i in self.clips:
             listbox_proc(self.h_list, LISTBOX_ADD, index=-1, text=i[0])
 
