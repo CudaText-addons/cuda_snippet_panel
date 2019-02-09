@@ -3,7 +3,7 @@ from cudatext import *
 import cudatext_cmd as cmds
 from .io import *
 
-fn_config = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_snippet_panel.ini')
+fn_config = 'plugins.ini'
 fn_icon = os.path.join(os.path.dirname(__file__), 'snip.png')
 dir_clips = os.path.join(os.path.dirname(__file__), 'clips')
 
@@ -19,6 +19,7 @@ class Command:
     def __init__(self):
 
         self.init_dlg()
+        self.folder = ini_read(fn_config, 'op', 'folder', '')
         
     def open_dlg(self):
 
@@ -63,11 +64,13 @@ class Command:
     
         self.folders = sorted(os.listdir(dir_clips))
         button_proc(self.h_btn, BTN_SET_ITEMS, '\n'.join(self.folders))
-        button_proc(self.h_btn, BTN_SET_ITEMINDEX, 0)
+        
+        if self.folder in self.folders:
+            index = self.folders.index(self.folder)
+            button_proc(self.h_btn, BTN_SET_ITEMINDEX, index)
+        else:
+            button_proc(self.h_btn, BTN_SET_ITEMINDEX, 0)
     
-    def update_list(self):
-    
-        pass
 
     def get_clips(self, fn):
     
@@ -96,7 +99,10 @@ class Command:
         id = button_proc(self.h_btn, BTN_GET_ITEMINDEX)
         if id<0: return
 
-        dir = os.path.join(dir_clips, self.folders[id])
+        self.folder = self.folders[id]
+        ini_write(fn_config, 'op', 'folder', self.folder)
+
+        dir = os.path.join(dir_clips, self.folder)
         l = os.listdir(dir)
         l = [os.path.join(dir, i) for i in l if i.endswith('.txt')]
         if not l: return
@@ -106,3 +112,4 @@ class Command:
             listbox_proc(self.h_list, LISTBOX_ADD, index=-1, text=i[0])
 
         listbox_proc(self.h_list, LISTBOX_SET_SEL, index=0)
+
