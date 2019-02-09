@@ -1,5 +1,6 @@
 import os
 from cudatext import *
+from .io import *
 
 fn_config = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_snippet_panel.ini')
 fn_icon = os.path.join(os.path.dirname(__file__), 'snip.png')
@@ -10,6 +11,7 @@ option_bool = True
 
 def bool_to_str(v): return '1' if v else '0'
 def str_to_bool(s): return s=='1'
+
 
 class Command:
     
@@ -64,8 +66,30 @@ class Command:
     def update_list(self):
     
         pass
+
+    def get_clips(self, fn):
+    
+        lines = open_read(fn).splitlines()
+        r = []
+        for i in lines:
+            if '=' not in i:
+                r.append((i, i))
+            else:
+                r.append(i.split('=', maxsplit=2))
+        return r
+            
         
     def callback_btn_change(self, id_dlg, id_ctl, data='', info=''):
 
+        listbox_proc(self.h_list, LISTBOX_DELETE_ALL)
         id = button_proc(self.h_btn, BTN_GET_ITEMINDEX)
-        print(self.clips[id])
+        if id<0: return
+        dir = os.path.join(dir_clips, self.clips[id])
+        
+        l = os.listdir(dir)
+        l = [os.path.join(dir, i) for i in l if i.endswith('.txt')]
+        if not l: return
+        
+        items = self.get_clips(l[0])
+        for i in items:
+            listbox_proc(self.h_list, LISTBOX_ADD, index=-1, text=i[0])
