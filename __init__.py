@@ -78,10 +78,15 @@ class Command:
 
     def get_clips(self, fn):
 
-        lines = open_read(fn).splitlines()
         r = []
-        for s in lines:
-            r.append(parse_usual_snip(s))
+        lines = open_read(fn).splitlines()
+        if fn.endswith('.synw-snippet'):
+            d = parse_synwrite_snip(lines)
+            if d:
+                r.append(d)
+        else:                
+            for s in lines:
+                r.append(parse_usual_snip(s))
         return r
 
 
@@ -109,7 +114,7 @@ class Command:
         ini_write(fn_config, 'op', 'folder', self.folder_)
 
         files = enum_dir(self.folder)
-        files = [i for i in files if i.endswith('.txt')]
+        files = [i for i in files if i.endswith('.txt') or i.endswith('.synw-snippet')]
         if not files: return
 
         for filename in files:

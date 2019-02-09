@@ -38,7 +38,7 @@ def bom_type(file):
 
     # If BOM is not provided, then assume its the codepage
     #     used by your operating system
-    return "cp1252"
+    return "utf8"
     # For the United States its: cp1252
 
 
