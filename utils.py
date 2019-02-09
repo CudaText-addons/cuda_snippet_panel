@@ -1,3 +1,13 @@
+import os
+
+def enum_dir(dir):
+
+    if not os.path.isdir(dir):
+        return []    
+    l = sorted(os.listdir(dir))
+    l = [os.path.join(dir, i) for i in l]
+    return l
+
 '''
 https://stackoverflow.com/questions/436220/determine-the-encoding-of-text-in-python
 '''
