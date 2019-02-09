@@ -1,0 +1,11 @@
+[info]
+title=Snippet Panel
+desc=Gives panel with short snippets, similar to Clips panel in SynWrite editor
+type=cudatext-plugin
+subdir=cuda_snippet_panel
+homepage=
+
+[item2]
+section=commands
+caption=Snippet Panel
+method=open_dlg
