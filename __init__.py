@@ -18,7 +18,7 @@ class Command:
     def __init__(self):
 
         self.init_dlg()
-        self.folder = ini_read(fn_config, 'op', 'folder', '')
+        self.folder = ini_read(fn_config, 'snippet_panel', 'folder', '')
 
     def open_dlg(self):
 
@@ -117,7 +117,7 @@ class Command:
 
         self.folder = self.folders[index]
         self.folder_ = self.folders_[index]
-        ini_write(fn_config, 'op', 'folder', self.folder_)
+        ini_write(fn_config, 'snippet_panel', 'folder', self.folder_)
 
         files = enum_dir(self.folder)
         files = [i for i in files if i.endswith('.txt') or i.endswith('.synw-snippet')]
