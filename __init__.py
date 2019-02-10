@@ -100,9 +100,8 @@ class Command:
         msg_status('Inserting: '+clip['name'])
         text = clip['text']
 
-        if clip['kind']=='sw':
-            sel = ed.get_text_sel()
-            text = text.replace('${sel}', sel)
+        sel = ed.get_text_sel()
+        text = text.replace('${sel}', sel)
 
         ed.cmd(cmds.cCommand_TextInsert, text)
 
