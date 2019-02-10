@@ -110,6 +110,7 @@ class Command:
 
         self.clips = []
         listbox_proc(self.h_list, LISTBOX_DELETE_ALL)
+        listbox_proc(self.h_list, LISTBOX_SET_SEL, index=-1)
 
         index = button_proc(self.h_btn, BTN_GET_ITEMINDEX)
         if index<0: return
@@ -122,11 +123,10 @@ class Command:
         files = [i for i in files if i.endswith('.txt') or i.endswith('.synw-snippet')]
         if not files: return
 
-        for filename in files:
-            self.clips += self.get_clips(filename)
+        for fn in files:
+            self.clips += self.get_clips(fn)
 
         for i in self.clips:
             listbox_proc(self.h_list, LISTBOX_ADD, index=-1, text=i['name'])
 
         listbox_proc(self.h_list, LISTBOX_SET_SEL, index=0)
-
